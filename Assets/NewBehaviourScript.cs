@@ -16,7 +16,7 @@ public class NewBehaviourScript : MonoBehaviour
 
 	private Transform groundCheck;			// A position marking where to check if the player is grounded.
 	private bool grounded = false;			// Whether or not the player is grounded.
-	public static float maxJumps = 1;
+	public static float maxJumps = 2;
 	private float jumps = maxJumps;
 
 
@@ -31,13 +31,12 @@ public class NewBehaviourScript : MonoBehaviour
 	{
 		// The player is grounded if a linecast to the groundcheck position hits anything on the ground layer.
 		grounded = Physics2D.Linecast(transform.position, groundCheck.position, 1 << LayerMask.NameToLayer("Ground"));  
-		if (grounded) {
-			Debug.Log ("g " + jumps);
+		if (grounded && jumps>0) {
+			Debug.Log ("Grounded...");
 			jumps = 0;
 		}
 		// If the jump button is pressed and the player is grounded then the player should jump.
 		if (Input.GetKeyDown (KeyCode.UpArrow) && jumps < maxJumps) {
-			jumps++;
 			jump = true;
 		}
 	}
@@ -76,6 +75,8 @@ public class NewBehaviourScript : MonoBehaviour
 
 			// Make sure the player can't jump again until the jump conditions from Update are satisfied.
 			jump = false;
+			jumps++;
+			Debug.Log (jumps);
 		}
 	}
 
