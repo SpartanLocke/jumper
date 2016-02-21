@@ -10,8 +10,9 @@ public class NewBehaviourScript : MonoBehaviour
 
 
 	public float moveForce = 365f;			// Amount of force added to move the player left and right.
-	public float maxSpeed = 5f;				// The fastest the player can travel in the x axis.
-	public float jumpForce = 1000f;			// Amount of force added when the player jumps.
+	public float maxXSpeed = 5f;				// The fastest the player can travel in the x axis.
+    public float maxYSpeed = 5f;
+    public float jumpForce = 1000f;			// Amount of force added when the player jumps.
     public float suckPower = 1f;
     public float pushPower = 1f;
 
@@ -30,7 +31,6 @@ public class NewBehaviourScript : MonoBehaviour
 		// Setting up references.
 		groundCheck = transform.Find("groundCheck");
         gravBall = GameObject.Find("gravBall");
-        Debug.Log(gravBall);
     }
 
 
@@ -65,14 +65,9 @@ public class NewBehaviourScript : MonoBehaviour
 		float h = Input.GetAxis("Horizontal");
 
 		// If the player is changing direction (h has a different sign to velocity.x) or hasn't reached maxSpeed yet...
-		if(h * GetComponent<Rigidbody2D>().velocity.x < maxSpeed)
+		if(h * GetComponent<Rigidbody2D>().velocity.x < maxXSpeed)
 			// ... add a force to the player.
 			GetComponent<Rigidbody2D>().AddForce(Vector2.right * h * moveForce);
-
-		// If the player's horizontal velocity is greater than the maxSpeed...
-		if(Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x) > maxSpeed)
-			// ... set the player's velocity to the maxSpeed in the x axis.
-			GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Sign(GetComponent<Rigidbody2D>().velocity.x) * maxSpeed, GetComponent<Rigidbody2D>().velocity.y);
 
 		// If the input is moving the player right and the player is facing left...
 		if(h > 0 && !facingRight)
@@ -93,16 +88,12 @@ public class NewBehaviourScript : MonoBehaviour
 			// Make sure the player can't jump again until the jump conditions from Update are satisfied.
 			jump = false;
 			jumps++;
-			Debug.Log (jumps);
 		}
 
         if (suck)
         {
             Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
             Vector2 suckV = -GetComponent<Rigidbody2D>().position + gravPos;
-            Debug.Log("sq " + GetComponent<Rigidbody2D>().position);
-            Debug.Log("gra " + gravPos);
-            Debug.Log("vec " + suckV.magnitude);
             suckV.Normalize();
             GetComponent<Rigidbody2D>().AddForce(suckPower * suckV);
         }
@@ -110,14 +101,25 @@ public class NewBehaviourScript : MonoBehaviour
         {
             Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
             Vector2 pushV =  GetComponent<Rigidbody2D>().position - gravPos;
-            Debug.Log("push " + GetComponent<Rigidbody2D>().position);
             pushV.Normalize();
-            GetComponent<Rigidbody2D>().AddForce(pushV);
+            GetComponent<Rigidbody2D>().AddForce(pushPower * pushV);
         }
-	}
+
+        // If the player's horizontal velocity is greater than the maxSpeed...
+        if (Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x) > maxXSpeed)
+        {
+            // ... set the player's velocity to the maxSpeed in the x axis.
+            GetComponent<Rigidbody2D>().velocity = new Vector2(Mathf.Sign(GetComponent<Rigidbody2D>().velocity.x) * maxXSpeed, GetComponent<Rigidbody2D>().velocity.y);
+        }
+        if (Mathf.Abs(GetComponent<Rigidbody2D>().velocity.y) > maxYSpeed)
+        {
+            GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, Mathf.Sign(GetComponent<Rigidbody2D>().velocity.y) * maxYSpeed);
+        }
+
+    }
 
 
-	void Flip ()
+    void Flip ()
 	{
 		// Switch the way the player is labelled as facing.
 		facingRight = !facingRight;
