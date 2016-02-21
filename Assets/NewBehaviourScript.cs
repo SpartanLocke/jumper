@@ -12,19 +12,26 @@ public class NewBehaviourScript : MonoBehaviour
 	public float moveForce = 365f;			// Amount of force added to move the player left and right.
 	public float maxSpeed = 5f;				// The fastest the player can travel in the x axis.
 	public float jumpForce = 1000f;			// Amount of force added when the player jumps.
+    public float suckPower = 1f;
+    public float pushPower = 1f;
 
 
-	private Transform groundCheck;			// A position marking where to check if the player is grounded.
+    private Transform groundCheck;			// A position marking where to check if the player is grounded.
+    private GameObject gravBall;
 	private bool grounded = false;			// Whether or not the player is grounded.
 	public static float maxJumps = 2;
 	private float jumps = maxJumps;
+    private bool suck = false;
+    private bool push = false;
 
 
 	void Awake()
 	{
 		// Setting up references.
 		groundCheck = transform.Find("groundCheck");
-	}
+        gravBall = GameObject.Find("gravBall");
+        Debug.Log(gravBall);
+    }
 
 
 	void Update()
@@ -39,7 +46,17 @@ public class NewBehaviourScript : MonoBehaviour
 		if (Input.GetKeyDown (KeyCode.UpArrow) && jumps < maxJumps) {
 			jump = true;
 		}
-	}
+        suck = false;
+        if (Input.GetKey("k"))
+        {
+            suck = true;
+        }
+        push= false;
+        if (Input.GetKey("l"))
+        {
+            push = true;
+        }
+    }
 
 
 	void FixedUpdate ()
@@ -78,6 +95,25 @@ public class NewBehaviourScript : MonoBehaviour
 			jumps++;
 			Debug.Log (jumps);
 		}
+
+        if (suck)
+        {
+            Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
+            Vector2 suckV = -GetComponent<Rigidbody2D>().position + gravPos;
+            Debug.Log("sq " + GetComponent<Rigidbody2D>().position);
+            Debug.Log("gra " + gravPos);
+            Debug.Log("vec " + suckV.magnitude);
+            suckV.Normalize();
+            GetComponent<Rigidbody2D>().AddForce(suckPower * suckV);
+        }
+        if (push)
+        {
+            Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
+            Vector2 pushV =  GetComponent<Rigidbody2D>().position - gravPos;
+            Debug.Log("push " + GetComponent<Rigidbody2D>().position);
+            pushV.Normalize();
+            GetComponent<Rigidbody2D>().AddForce(pushV);
+        }
 	}
 
 
