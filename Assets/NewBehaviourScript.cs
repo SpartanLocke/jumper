@@ -24,6 +24,9 @@ public class NewBehaviourScript : MonoBehaviour
 	private float jumps = maxJumps;
     private bool suck = false;
     private bool push = false;
+	private bool suckscale = false;
+	private bool pushscale = false;
+
 
 
 	void Awake()
@@ -56,6 +59,16 @@ public class NewBehaviourScript : MonoBehaviour
         {
             push = true;
         }
+		suckscale = false;
+		if (Input.GetKey("o"))
+		{
+			suckscale = true;
+		}
+		pushscale = false;
+		if (Input.GetKey("p"))
+		{
+			pushscale = true;
+		}
     }
 
 
@@ -90,20 +103,36 @@ public class NewBehaviourScript : MonoBehaviour
 			jumps++;
 		}
 
-        if (suck)
+        if (suckscale)
         {
             Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
             Vector2 suckV = -GetComponent<Rigidbody2D>().position + gravPos;
+			float scale = suckV.magnitude;
             suckV.Normalize();
-            GetComponent<Rigidbody2D>().AddForce(suckPower * suckV);
+            GetComponent<Rigidbody2D>().AddForce(suckPower * suckV /scale);
         }
-        if (push)
+        if (pushscale)
         {
             Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
             Vector2 pushV =  GetComponent<Rigidbody2D>().position - gravPos;
+			float scale = pushV.magnitude;
             pushV.Normalize();
-            GetComponent<Rigidbody2D>().AddForce(pushPower * pushV);
+            GetComponent<Rigidbody2D>().AddForce(pushPower * pushV /scale);
         }
+		if (suck)
+		{
+			Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
+			Vector2 suckV = -GetComponent<Rigidbody2D>().position + gravPos;
+			suckV.Normalize();
+			GetComponent<Rigidbody2D>().AddForce(suckPower * suckV);
+		}
+		if (push)
+		{
+			Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
+			Vector2 pushV =  GetComponent<Rigidbody2D>().position - gravPos;
+			pushV.Normalize();
+			GetComponent<Rigidbody2D>().AddForce(pushPower * pushV);
+		}
 
         // If the player's horizontal velocity is greater than the maxSpeed...
         if (Mathf.Abs(GetComponent<Rigidbody2D>().velocity.x) > maxXSpeed)
