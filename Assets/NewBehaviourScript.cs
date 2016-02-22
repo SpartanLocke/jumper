@@ -109,7 +109,7 @@ public class NewBehaviourScript : MonoBehaviour
             Vector2 suckV = -GetComponent<Rigidbody2D>().position + gravPos;
 			float scale = suckV.magnitude;
             suckV.Normalize();
-            GetComponent<Rigidbody2D>().AddForce(suckPower * suckV /scale);
+            GetComponent<Rigidbody2D>().AddForce(suckPower * suckV /scale/scale);
         }
         if (pushscale)
         {
@@ -117,7 +117,7 @@ public class NewBehaviourScript : MonoBehaviour
             Vector2 pushV =  GetComponent<Rigidbody2D>().position - gravPos;
 			float scale = pushV.magnitude;
             pushV.Normalize();
-            GetComponent<Rigidbody2D>().AddForce(pushPower * pushV /scale);
+            GetComponent<Rigidbody2D>().AddForce(pushPower * pushV /scale/scale);
         }
 		if (suck)
 		{
