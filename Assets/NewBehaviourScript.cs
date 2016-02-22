@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class NewBehaviourScript : MonoBehaviour
@@ -13,27 +14,18 @@ public class NewBehaviourScript : MonoBehaviour
 	public float maxXSpeed = 5f;				// The fastest the player can travel in the x axis.
     public float maxYSpeed = 5f;
     public float jumpForce = 1000f;			// Amount of force added when the player jumps.
-    public float suckPower = 1f;
-    public float pushPower = 1f;
+    
 
 
     private Transform groundCheck;			// A position marking where to check if the player is grounded.
-    private GameObject gravBall;
 	private bool grounded = false;			// Whether or not the player is grounded.
 	public static float maxJumps = 2;
 	private float jumps = maxJumps;
-    private bool suck = false;
-    private bool push = false;
-	private bool suckscale = false;
-	private bool pushscale = false;
-
-
-
+    
 	void Awake()
 	{
 		// Setting up references.
 		groundCheck = transform.Find("groundCheck");
-        gravBall = GameObject.Find("gravBall");
     }
 
 
@@ -49,26 +41,10 @@ public class NewBehaviourScript : MonoBehaviour
 		if (Input.GetKeyDown (KeyCode.UpArrow) && jumps < maxJumps) {
 			jump = true;
 		}
-        suck = false;
-        if (Input.GetKey("k"))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            suck = true;
+            SceneManager.LoadScene("Scene");
         }
-        push= false;
-        if (Input.GetKey("l"))
-        {
-            push = true;
-        }
-		suckscale = false;
-		if (Input.GetKey("o"))
-		{
-			suckscale = true;
-		}
-		pushscale = false;
-		if (Input.GetKey("p"))
-		{
-			pushscale = true;
-		}
     }
 
 
@@ -101,38 +77,6 @@ public class NewBehaviourScript : MonoBehaviour
 			// Make sure the player can't jump again until the jump conditions from Update are satisfied.
 			jump = false;
 			jumps++;
-		}
-
-        if (suckscale)
-        {
-			Debug.Log ("here");
-            Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
-            Vector2 suckV = -GetComponent<Rigidbody2D>().position + gravPos;
-			float scale = suckV.magnitude;
-            suckV.Normalize();
-            GetComponent<Rigidbody2D>().AddForce(suckPower * suckV /scale);
-        }
-        if (pushscale)
-        {
-            Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
-            Vector2 pushV =  GetComponent<Rigidbody2D>().position - gravPos;
-			float scale = pushV.magnitude;
-            pushV.Normalize();
-            GetComponent<Rigidbody2D>().AddForce(pushPower * pushV /scale);
-        }
-		if (suck)
-		{
-			Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
-			Vector2 suckV = -GetComponent<Rigidbody2D>().position + gravPos;
-			suckV.Normalize();
-			GetComponent<Rigidbody2D>().AddForce(suckPower * suckV);
-		}
-		if (push)
-		{
-			Vector2 gravPos = new Vector2(gravBall.transform.position.x, gravBall.transform.position.y);
-			Vector2 pushV =  GetComponent<Rigidbody2D>().position - gravPos;
-			pushV.Normalize();
-			GetComponent<Rigidbody2D>().AddForce(pushPower * pushV);
 		}
 
         // If the player's horizontal velocity is greater than the maxSpeed...
