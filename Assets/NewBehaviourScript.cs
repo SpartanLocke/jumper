@@ -13,6 +13,7 @@ public class NewBehaviourScript : MonoBehaviour
 	public float moveForce = 365f;			// Amount of force added to move the player left and right.
 	public float maxXSpeed = 5f;				// The fastest the player can travel in the x axis.
     public float maxYSpeed = 5f;
+	public float maxRotationSpeed = 750f;
     public float jumpForce = 1000f;			// Amount of force added when the player jumps.
     
 
@@ -89,7 +90,7 @@ public class NewBehaviourScript : MonoBehaviour
         {
             GetComponent<Rigidbody2D>().velocity = new Vector2(GetComponent<Rigidbody2D>().velocity.x, Mathf.Sign(GetComponent<Rigidbody2D>().velocity.y) * maxYSpeed);
         }
-
+		GetComponent<Rigidbody2D>().angularVelocity = Mathf.Clamp(GetComponent<Rigidbody2D>().angularVelocity, -maxRotationSpeed, maxRotationSpeed);
     }
 
 
